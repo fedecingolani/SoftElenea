@@ -26,14 +26,14 @@ class _MenuState extends State<Menu> {
             leading: const Icon(Icons.output),
             title: const Text('Retirar Mercaderia'),
             onTap: () {
-              Navigator.pushNamed(context, '/');
+              Navigator.pushNamed(context, '/retirar_mercaderia');
             },
           ),
           ListTile(
             leading: const Icon(Icons.input),
-            title: const Text('Ingreso Mercaderia'),
+            title: const Text('Ingresar Mercaderia'),
             onTap: () {
-              Navigator.pushNamed(context, '/');
+              Navigator.pushNamed(context, '/ingresar_mercaderia');
             },
           ),
           ListTile(
@@ -48,6 +48,14 @@ class _MenuState extends State<Menu> {
             title: const Text('Stock'),
             onTap: () {
               Navigator.pushNamed(context, '/stock');
+            },
+          ),
+          Spacer(),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Configuracion'),
+            onTap: () {
+              Navigator.pushNamed(context, '/settings');
             },
           ),
         ],

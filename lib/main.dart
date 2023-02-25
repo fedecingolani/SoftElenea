@@ -1,13 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tester_app/ingresar_mercaderia/home.dart';
 
 import 'package:tester_app/menu/menu.dart';
 import 'package:tester_app/retirar_mercaderia/home.dart';
+import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
+import 'package:tester_app/setting_init.dart';
+import 'package:tester_app/settings_page.dart';
 
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SettingInit.init();
   if (!kIsWeb) {
     WindowOptions windowOptions = const WindowOptions(
       size: Size(1900, 1080),
@@ -36,18 +42,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          brightness: Brightness.dark,
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark, primarySwatch: Colors.blue),
-        ),
-        initialRoute: '/retirar_mercaderia',
-        routes: {
-          '/retirar_mercaderia': (context) => RetirarMercaderia(),
-          '/ingresar_mercaderia': (context) => Container(),
-        });
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => RetirarMerProvider())
+        ],
+        builder: (context, child) => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Flutter Demo',
+                theme: ThemeData(
+                  useMaterial3: true,
+                  colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark, primaryColorDark: Colors.amber.shade500, primarySwatch: Colors.amber),
+                ),
+                initialRoute: '/retirar_mercaderia',
+                routes: {
+                  '/retirar_mercaderia': (context) => RetirarMercaderia(),
+                  '/ingresar_mercaderia': (context) => IngresarMercaderia(),
+                  '/settings': (context) => const SettingPage(),
+                }));
   }
 }

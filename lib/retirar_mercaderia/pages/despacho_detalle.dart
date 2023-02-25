@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
 
 class DetalleDespacho extends StatefulWidget {
   const DetalleDespacho({Key? key}) : super(key: key);
@@ -11,9 +13,9 @@ class _DetalleDespachoState extends State<DetalleDespacho> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(10),
+      margin: EdgeInsets.all(10),
       decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
-      child: const Text('DETALLE DESPACHO'),
+      child: Text(context.watch<RetirarMerProvider>().listaProductosFiltrados.length.toString()),
     );
   }
 }

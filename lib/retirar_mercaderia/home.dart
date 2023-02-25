@@ -8,6 +8,7 @@ import 'package:tester_app/retirar_mercaderia/pages/armado_bandejas.dart';
 import 'package:tester_app/retirar_mercaderia/pages/busqueda_producto.dart';
 import 'package:tester_app/retirar_mercaderia/pages/busqueda_resultados.dart';
 import 'package:tester_app/retirar_mercaderia/pages/stock.dart';
+import 'package:tester_app/setting_init.dart';
 
 class RetirarMercaderia extends StatefulWidget {
   RetirarMercaderia({Key? key}) : super(key: key);
@@ -20,14 +21,17 @@ class _RetirarMercaderiaState extends State<RetirarMercaderia> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: DRAWER ? Menu() : null,
       body: Center(
           child: Row(
         children: [
-          SizedBox(
-            width: 300,
-            height: double.infinity,
-            child: Menu(),
-          ),
+          DRAWER
+              ? const SizedBox(width: 0)
+              : SizedBox(
+                  width: WIDTH_MENU,
+                  height: double.infinity,
+                  child: Menu(),
+                ),
           Expanded(
               child: SizedBox(
             height: double.infinity,
