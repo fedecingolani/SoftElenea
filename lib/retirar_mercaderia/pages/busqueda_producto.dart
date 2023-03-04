@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tester_app/medidas.dart';
 import 'package:tester_app/retirar_mercaderia/repositorio_api.dart';
@@ -30,23 +31,42 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
     _txtDiametro.text = context.read<RetirarMerProvider>().txtDiametro;
 
     _textBusqueda.addListener(() {
-      print('Busqueda: ${_textBusqueda.text}');
       context.read<RetirarMerProvider>().txtBusqueda = _textBusqueda.text;
     });
 
     _txtEsferico.addListener(() {
-      print('Esferico: ${_txtEsferico.text}');
       context.read<RetirarMerProvider>().txtEsferico = _txtEsferico.text;
     });
 
     _txtCilindrico.addListener(() {
-      print('Cilindrico: ${_txtCilindrico.text}');
       context.read<RetirarMerProvider>().txtCilindrico = _txtCilindrico.text;
     });
 
     _txtDiametro.addListener(() {
-      print('Diametro: ${_txtDiametro.text}');
       context.read<RetirarMerProvider>().txtDiametro = _txtDiametro.text;
+    });
+
+    _focusTextBusqueda.addListener(() {
+      if (_focusTextBusqueda.hasFocus) {
+        _textBusqueda.selection = TextSelection(baseOffset: 0, extentOffset: _textBusqueda.text.length);
+      }
+    });
+
+    _focusTextCil.addListener(() {
+      if (_focusTextCil.hasFocus) {
+        _txtCilindrico.selection = TextSelection(baseOffset: 0, extentOffset: _txtCilindrico.text.length);
+      }
+    });
+    _focusTextDiam.addListener(() {
+      if (_focusTextDiam.hasFocus) {
+        _txtDiametro.selection = TextSelection(baseOffset: 0, extentOffset: _txtDiametro.text.length);
+      }
+    });
+
+    _focusTextEsf.addListener(() {
+      if (_focusTextEsf.hasFocus) {
+        _txtEsferico.selection = TextSelection(baseOffset: 0, extentOffset: _txtEsferico.text.length);
+      }
     });
 
     super.initState();
@@ -63,83 +83,124 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              space10,
-              const Text('Busqueda: '),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey),
-                ),
-                width: 250,
-                height: 35,
-                child: TextField(
-                  controller: _textBusqueda,
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    suffixIcon: context.watch<RetirarMerProvider>().cargandoProductos ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator()) : null,
-                    border: InputBorder.none,
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (RawKeyEvent event) {
+        if (event.isKeyPressed(LogicalKeyboardKey.f1)) {
+          _focusTextBusqueda.requestFocus();
+        }
+        if (event.isKeyPressed(LogicalKeyboardKey.f2)) {
+          _focusTextEsf.requestFocus();
+        }
+        if (event.isKeyPressed(LogicalKeyboardKey.f3)) {
+          _focusTextCil.requestFocus();
+        }
+        if (event.isKeyPressed(LogicalKeyboardKey.f4)) {
+          _focusTextDiam.requestFocus();
+        }
+      },
+      child: Container(
+          margin: const EdgeInsets.all(10),
+          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                space10,
+                const Text('Busqueda: '),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey),
                   ),
-                  onEditingComplete: () => context.read<RetirarMerProvider>().getListaProductos(),
-                ),
-              ),
-              space20,
-              FilledButton(
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                  width: 250,
+                  height: 35,
+                  child: Stack(
+                    children: [
+                      TextField(
+                        focusNode: _focusTextBusqueda,
+                        controller: _textBusqueda,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: const InputDecoration(
+                          //suffix: context.watch<RetirarMerProvider>().cargandoProductos ? const CircularProgressIndicator() : const Text('F1'),
+                          border: InputBorder.none,
+                        ),
+                        onEditingComplete: () => context.read<RetirarMerProvider>().getListaProductos().catchError(
+                          (onError) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de productos. $onError')));
+                          },
+                        ),
                       ),
-                    ),
-                    backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(220, 253, 236, 0)),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: context.watch<RetirarMerProvider>().cargandoProductos ? const CircularProgressIndicator() : const Text('F1'),
+                      )
+                    ],
                   ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Agrupados',
-                    textAlign: TextAlign.center,
-                  )),
-              space60,
-              const Text('Esférico: '),
-              cajaTexto(controller: _txtEsferico),
-              space20,
-              space20,
-              const Text('Cilíndrico: '),
-              cajaTexto(controller: _txtCilindrico),
-              space20,
-              space20,
-              const Text('Diamétro: '),
-              cajaTexto(controller: _txtDiametro),
-            ],
-          ),
-        ));
+                ),
+                space20,
+                FilledButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      //backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(220, 253, 236, 0)),
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Agrupados',
+                      textAlign: TextAlign.center,
+                    )),
+                space60,
+                const Text('Esférico: '),
+                cajaTexto(controller: _txtEsferico, focus: _focusTextEsf, tecla: 'F2'),
+                space20,
+                space20,
+                const Text('Cilíndrico: '),
+                cajaTexto(controller: _txtCilindrico, focus: _focusTextCil, tecla: 'F3'),
+                space20,
+                space20,
+                const Text('Diamétro: '),
+                cajaTexto(controller: _txtDiametro, focus: _focusTextDiam, tecla: 'F4'),
+              ],
+            ),
+          )),
+    );
   }
 
-  Container cajaTexto({required TextEditingController controller}) {
+  Container cajaTexto({required TextEditingController controller, required FocusNode focus, String tecla = ''}) {
     return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey),
-      ),
-      width: 150,
-      height: 35,
-      child: TextField(
-        controller: controller,
-        textAlignVertical: TextAlignVertical.center,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.grey),
         ),
-        onSubmitted: (value) async => context.read<RetirarMerProvider>().getListaProductos(),
-      ),
-    );
+        width: 150,
+        height: 35,
+        child: Stack(children: [
+          TextField(
+            controller: controller,
+            focusNode: focus,
+            textAlignVertical: TextAlignVertical.center,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+            ),
+            onEditingComplete: () => context.read<RetirarMerProvider>().getListaProductos().catchError(
+              (onError) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de productos. $onError')));
+              },
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(tecla),
+          )
+        ]));
   }
 }

@@ -38,9 +38,9 @@ class ModelGetProductos {
         posicion: json["Posicion"],
         cantidad: json["Cantidad"],
         nombre: json["Nombre"],
-        esferico: json["esferico"],
-        cilindrico: json["cilindrico"],
-        diameter: json["diameter"],
+        esferico: json["esferico"] ?? '',
+        cilindrico: json["cilindrico"] ?? '',
+        diameter: json["diameter"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {

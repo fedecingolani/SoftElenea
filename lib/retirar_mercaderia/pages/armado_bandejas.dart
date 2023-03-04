@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tester_app/medidas.dart';
-import 'package:tester_app/retirar_mercaderia/models/models_getProductos.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
+
+import '../retirar_despacho_provider.dart';
+import '../retirar_mer_provider.dart';
+
+import '.././models/model_getProductos.dart';
 
 class ArmadoBandejas extends StatefulWidget {
   const ArmadoBandejas({Key? key}) : super(key: key);
@@ -14,34 +17,34 @@ class ArmadoBandejas extends StatefulWidget {
 class _ArmadoBandejasState extends State<ArmadoBandejas> {
   @override
   Widget build(BuildContext context) {
-    List<ModelGetProductos> data = context.watch<RetirarMerProvider>().listaProductosFiltrados;
-    print('armado bandeja');
+    var data = context.watch<RetirarMerProvider>().listaProductosFiltrados;
+    print('Dibuja ArmadoBandejas');
     return Stack(children: [
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Container(
-              height: 180,
+              height: 230,
               margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
               child: data.isNotEmpty
                   ? SingleChildScrollView(
                       child: detalleBandeja(data, 0),
                     )
-                  : const Text('BANDEJA 1 '),
+                  : const Center(child: Text('BANDEJA 1 SIN PRODUCTOS')),
             ),
           ),
           Expanded(
             child: Container(
-              height: 180,
+              height: 230,
               margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+              decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))),
               child: data.isNotEmpty && data.length > 1
                   ? SingleChildScrollView(
                       child: detalleBandeja(data, 1),
                     )
-                  : const Text('BANDEJA 2 '),
+                  : const Center(child: Text('BANDEJA 2 SIN PRODUCTOS')),
             ),
           ),
         ],
@@ -60,18 +63,23 @@ class _ArmadoBandejasState extends State<ArmadoBandejas> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                FilledButton(
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                Tooltip(
+                  message: 'Generar Despacho',
+                  child: FilledButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
                         ),
+                        // backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(120, 255, 247, 0)),
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
                       ),
-                      backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(120, 255, 247, 0)),
-                      foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                    ),
-                    onPressed: () {},
-                    child: Text('Generar Despacho')),
+                      onPressed: () => context.read<DespachoProvider>().armarDespachos(context.read<RetirarMerProvider>().listaProductosFiltrados).catchError((error) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se produjo algun error. $error')));
+                          }).whenComplete(() => context.read<DespachoProvider>().getListaDespacho()),
+                      child: const Text('Generar Despacho')),
+                ),
               ],
             )),
       ),
@@ -82,14 +90,31 @@ class _ArmadoBandejasState extends State<ArmadoBandejas> {
     String bandeja = index == 0 ? 'BANDEJA 1' : 'BANDEJA 2';
     return Column(
       children: [
-        Center(
-            child: Text(
-          bandeja,
-          style: const TextStyle(fontSize: 18),
-        )),
-        Divider(),
-        Text(data[0].nombre),
-        Divider(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(),
+            Text(
+              bandeja,
+              style: const TextStyle(fontSize: 18),
+            ),
+            const Spacer(),
+            IconButton(
+                onPressed: () {
+                  context.read<RetirarMerProvider>().eliminarProductoBandeja(index);
+                },
+                icon: const Icon(
+                  Icons.delete,
+                  size: 20,
+                ))
+          ],
+        ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text(data[0].nombre),
+        ),
+        const Divider(),
         Text('Cod. Barra: ${data[index].codigoBarra}'),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

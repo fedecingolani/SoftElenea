@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tester_app/retirar_mercaderia/models/models_getProductos.dart';
+import 'package:tester_app/retirar_mercaderia/models/model_getProductos.dart';
 import 'package:tester_app/retirar_mercaderia/repositorio_api.dart';
 
 class RetirarMerProvider extends ChangeNotifier {
@@ -64,10 +64,27 @@ class RetirarMerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getListaProductos() async {
-    cargandoProductos = true;
-    listaProductos = [];
-    listaProductos = await RepositorioApi.getProductos(dato: _txtBusqueda, esferico: _txtEsferico, cilindrico: _txtCilindrico, diametro: _txtDiametro);
-    cargandoProductos = false;
+  Future<void> getListaProductos() async {
+    try {
+      cargandoProductos = true;
+      listaProductos = [];
+
+      listaProductos = await RepositorioApi.getProductos(dato: _txtBusqueda, esferico: _txtEsferico, cilindrico: _txtCilindrico, diametro: _txtDiametro);
+
+      cargandoProductos = false;
+    } catch (e) {
+      print(e.toString());
+      cargandoProductos = false;
+      return Future.error(e.toString());
+    }
+  }
+
+  void limpiarBandejas() {
+    listaProductosFiltrados = [];
+  }
+
+  void eliminarProductoBandeja(int index) {
+    _listaProductosFiltrados.removeAt(index);
+    notifyListeners();
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Menu extends StatefulWidget {
-  Menu({Key? key}) : super(key: key);
+  const Menu({Key? key}) : super(key: key);
 
   @override
   State<Menu> createState() => _MenuState();
@@ -20,34 +20,34 @@ class _MenuState extends State<Menu> {
             width: double.infinity,
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(color: Colors.black.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
-            child: Center(child: const Text('OPTICA ELENA')),
+            child: const Center(child: Text('OPTICA ELENA')),
           ),
           ListTile(
             leading: const Icon(Icons.output),
             title: const Text('Retirar Mercaderia'),
             onTap: () {
-              Navigator.pushNamed(context, '/retirar_mercaderia');
+              Navigator.pushReplacementNamed(context, '/retirar_mercaderia');
             },
           ),
           ListTile(
             leading: const Icon(Icons.input),
             title: const Text('Ingresar Mercaderia'),
             onTap: () {
-              Navigator.pushNamed(context, '/ingresar_mercaderia');
+              Navigator.pushReplacementNamed(context, '/ingresar_mercaderia');
             },
           ),
           ListTile(
             leading: const Icon(Icons.search),
             title: const Text('Busqueda'),
             onTap: () {
-              Navigator.pushNamed(context, '/busqueda');
+              Navigator.pushReplacementNamed(context, '/busqueda');
             },
           ),
           ListTile(
             leading: const Icon(Icons.shopping_cart),
             title: const Text('Stock'),
             onTap: () {
-              Navigator.pushNamed(context, '/stock');
+              Navigator.pushReplacementNamed(context, '/stock');
             },
           ),
           Spacer(),

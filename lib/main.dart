@@ -5,16 +5,18 @@ import 'package:tester_app/ingresar_mercaderia/home.dart';
 
 import 'package:tester_app/menu/menu.dart';
 import 'package:tester_app/retirar_mercaderia/home.dart';
+import 'package:tester_app/retirar_mercaderia/retirar_despacho_provider.dart';
 import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
-import 'package:tester_app/setting_init.dart';
+import 'package:tester_app/config.dart';
 import 'package:tester_app/settings_page.dart';
 
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SettingInit.init();
-  if (!kIsWeb) {
+
+  await Config.init();
+  if (defaultTargetPlatform == TargetPlatform.windows) {
     WindowOptions windowOptions = const WindowOptions(
       size: Size(1900, 1080),
       center: true,
@@ -22,10 +24,11 @@ void main() async {
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.normal,
-      minimumSize: Size(1400, 800),
+      minimumSize: Size(1400, 900),
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
+
       await windowManager.maximize();
 
       await windowManager.focus();
@@ -44,7 +47,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => RetirarMerProvider())
+          ChangeNotifierProvider(create: (_) => RetirarMerProvider()),
+          ChangeNotifierProvider(create: (_) => DespachoProvider()),
         ],
         builder: (context, child) => MaterialApp(
                 debugShowCheckedModeBanner: false,

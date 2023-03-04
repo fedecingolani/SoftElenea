@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tester_app/config.dart';
 import 'package:tester_app/medidas.dart';
 
 class SettingPage extends StatefulWidget {
@@ -11,6 +12,7 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   TextEditingController ipServerController = TextEditingController();
+  TextEditingController timerDespacho = TextEditingController();
   TextEditingController widthMenu = TextEditingController();
   late SharedPreferences prefs;
   bool drawer = false;
@@ -23,6 +25,7 @@ class _SettingPageState extends State<SettingPage> {
         ipServerController.text = prefs.getString('ip_server') ?? '';
         widthMenu.text = prefs.getDouble('width_menu').toString();
         drawer = prefs.getBool('drawer') ?? false;
+        timerDespacho.text = prefs.getInt('timer_despacho').toString();
       });
     });
 
@@ -31,7 +34,10 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   void dispose() {
+    Config.init();
     ipServerController.dispose();
+    timerDespacho.dispose();
+    widthMenu.dispose();
     super.dispose();
   }
 
@@ -48,7 +54,7 @@ class _SettingPageState extends State<SettingPage> {
             Row(
               children: [
                 space20,
-                Text('Ip Server: '),
+                const SizedBox(width: 100, child: Text('Ip Server: ')),
                 space10,
                 SizedBox(
                   width: 300,
@@ -61,15 +67,37 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 IconButton(
                     onPressed: () async {
+                      Config.IP_SERVER = ipServerController.text;
                       prefs.setString('ip_server', ipServerController.text);
                     },
                     icon: const Icon(Icons.save))
               ],
             ),
             Row(
+              //timer despacho
               children: [
                 space20,
-                Text('Ancho Menu '),
+                const SizedBox(width: 100, child: Text('Timer Despacho: ')),
+                space10,
+                SizedBox(
+                  width: 300,
+                  child: TextField(
+                    controller: timerDespacho,
+                    decoration: const InputDecoration(),
+                  ),
+                ),
+                IconButton(
+                    onPressed: () async {
+                      prefs.setInt('timer_despacho', int.parse(timerDespacho.text));
+                    },
+                    icon: const Icon(Icons.save))
+              ],
+            ),
+            space20,
+            Row(
+              children: [
+                space20,
+                const SizedBox(width: 100, child: Text('Ancho Menu ')),
                 space10,
                 SizedBox(
                   width: 300,
@@ -85,10 +113,11 @@ class _SettingPageState extends State<SettingPage> {
                     icon: const Icon(Icons.save))
               ],
             ),
+            space20,
             Row(
               children: [
                 space20,
-                Text('Drawer '),
+                const SizedBox(width: 100, child: Text('Drawer ')),
                 space10,
                 Checkbox(
                     value: drawer,

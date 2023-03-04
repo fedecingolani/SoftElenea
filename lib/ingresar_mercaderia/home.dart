@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tester_app/menu/menu.dart';
 
-import '../setting_init.dart';
+import '../config.dart';
 
 class IngresarMercaderia extends StatefulWidget {
   const IngresarMercaderia({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _IngresarMercaderiaState extends State<IngresarMercaderia> {
           child: Row(
         children: [
           SizedBox(
-            width: WIDTH_MENU,
+            width: Config.WIDTH_MENU,
             height: double.infinity,
             child: Menu(),
           ),
