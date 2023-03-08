@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tester_app/medidas.dart';
-import 'package:tester_app/retirar_mercaderia/repositorio_api.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
+import 'package:robot_soft/config.dart';
+import 'package:robot_soft/medidas.dart';
+import 'package:robot_soft/retirar_mercaderia/repositorio_api.dart';
+import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class BusquedaProducto extends StatefulWidget {
   const BusquedaProducto({Key? key}) : super(key: key);
@@ -108,6 +109,18 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                context.watch<Config>().drawerMenu
+                    ? Container()
+                    : SizedBox(
+                        child: IconButton(
+                            onPressed: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                            icon: const Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Icon(Icons.menu),
+                            )),
+                      ),
                 space10,
                 const Text('Busqueda: '),
                 Container(

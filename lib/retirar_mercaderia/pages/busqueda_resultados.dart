@@ -1,7 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
+import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class BusquedaResultados extends StatefulWidget {
   const BusquedaResultados({Key? key}) : super(key: key);

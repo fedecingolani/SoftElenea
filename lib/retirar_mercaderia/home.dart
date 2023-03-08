@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-import 'package:tester_app/menu/menu.dart';
+import 'package:robot_soft/menu/menu.dart';
 
-import 'package:tester_app/retirar_mercaderia/pages/despacho_detalle.dart';
-import 'package:tester_app/retirar_mercaderia/pages/despacho.dart';
-import 'package:tester_app/retirar_mercaderia/pages/armado_bandejas.dart';
-import 'package:tester_app/retirar_mercaderia/pages/busqueda_producto.dart';
-import 'package:tester_app/retirar_mercaderia/pages/busqueda_resultados.dart';
-import 'package:tester_app/retirar_mercaderia/pages/stock.dart';
-import 'package:tester_app/config.dart';
+import 'package:robot_soft/retirar_mercaderia/pages/despacho_detalle.dart';
+import 'package:robot_soft/retirar_mercaderia/pages/despacho.dart';
+import 'package:robot_soft/retirar_mercaderia/pages/armado_bandejas.dart';
+import 'package:robot_soft/retirar_mercaderia/pages/busqueda_producto.dart';
+import 'package:robot_soft/retirar_mercaderia/pages/busqueda_resultados.dart';
+import 'package:robot_soft/retirar_mercaderia/pages/stock.dart';
+import 'package:robot_soft/config.dart';
 
 class RetirarMercaderia extends StatefulWidget {
-  RetirarMercaderia({Key? key}) : super(key: key);
+  const RetirarMercaderia({Key? key}) : super(key: key);
 
   @override
   State<RetirarMercaderia> createState() => _RetirarMercaderiaState();
@@ -20,20 +21,27 @@ class RetirarMercaderia extends StatefulWidget {
 
 class _RetirarMercaderiaState extends State<RetirarMercaderia> {
   @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        drawer: Config.DRAWER ? Menu() : null,
+        drawer: const Menu(),
         body: Center(
             child: Row(
           children: [
-            Config.DRAWER
-                ? const SizedBox(width: 0)
-                : SizedBox(
-                    width: Config.WIDTH_MENU,
+            context.watch<Config>().drawerMenu
+                ? SizedBox(
+                    width: context.watch<Config>().widthMenu,
                     height: double.infinity,
-                    child: Menu(),
-                  ),
+                    child: const Menu(),
+                  )
+                : Container(),
             Expanded(
                 child: SizedBox(
               height: double.infinity,

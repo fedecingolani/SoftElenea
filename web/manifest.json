@@ -1,6 +1,6 @@
 {
-    "name": "tester_app",
-    "short_name": "tester_app",
+    "name": "robot_soft",
+    "short_name": "robot_soft",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

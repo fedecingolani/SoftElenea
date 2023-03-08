@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tester_app/medidas.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_despacho_provider.dart';
+import 'package:robot_soft/medidas.dart';
+import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
 
 class DescuentoStock extends StatefulWidget {
   const DescuentoStock({Key? key}) : super(key: key);
@@ -70,7 +70,11 @@ class _DescuentoStockState extends State<DescuentoStock> {
                           border: InputBorder.none,
                         ),
                         onEditingComplete: () {
-                          context.read<DespachoProvider>().updateStock(controller.text, 1);
+                          context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
+                            (onError) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
+                            },
+                          );
                         })),
               ),
               Tooltip(

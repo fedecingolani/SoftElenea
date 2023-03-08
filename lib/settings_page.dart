@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tester_app/config.dart';
-import 'package:tester_app/medidas.dart';
+import 'package:robot_soft/config.dart';
+import 'package:robot_soft/medidas.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
@@ -14,27 +15,16 @@ class _SettingPageState extends State<SettingPage> {
   TextEditingController ipServerController = TextEditingController();
   TextEditingController timerDespacho = TextEditingController();
   TextEditingController widthMenu = TextEditingController();
-  late SharedPreferences prefs;
+
   bool drawer = false;
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((value) {
-      prefs = value;
-      setState(() {
-        ipServerController.text = prefs.getString('ip_server') ?? '';
-        widthMenu.text = prefs.getDouble('width_menu').toString();
-        drawer = prefs.getBool('drawer') ?? false;
-        timerDespacho.text = prefs.getInt('timer_despacho').toString();
-      });
-    });
-
     super.initState();
   }
 
   @override
   void dispose() {
-    Config.init();
     ipServerController.dispose();
     timerDespacho.dispose();
     widthMenu.dispose();
@@ -43,6 +33,11 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    ipServerController.text = context.watch<Config>().serverIP;
+    timerDespacho.text = context.watch<Config>().timerDespacho.toString();
+    widthMenu.text = context.watch<Config>().widthMenu.toString();
+    drawer = context.watch<Config>().drawerMenu;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Configuración Sistema'),
@@ -67,8 +62,7 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 IconButton(
                     onPressed: () async {
-                      Config.IP_SERVER = ipServerController.text;
-                      prefs.setString('ip_server', ipServerController.text);
+                      context.read<Config>().setServerIP(ipServerController.text);
                     },
                     icon: const Icon(Icons.save))
               ],
@@ -88,7 +82,7 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 IconButton(
                     onPressed: () async {
-                      prefs.setInt('timer_despacho', int.parse(timerDespacho.text));
+                      context.read<Config>().setTimerDespacho(int.parse(timerDespacho.text));
                     },
                     icon: const Icon(Icons.save))
               ],
@@ -108,7 +102,7 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 IconButton(
                     onPressed: () async {
-                      prefs.setDouble('width_menu', double.parse(widthMenu.text));
+                      context.read<Config>().setWidthMenu(double.parse(widthMenu.text));
                     },
                     icon: const Icon(Icons.save))
               ],
@@ -125,7 +119,7 @@ class _SettingPageState extends State<SettingPage> {
                       setState(() {
                         drawer = value!;
                       });
-                      prefs.setBool('drawer', value!);
+                      context.read<Config>().setDrawerMenu(drawer);
                     })
               ],
             ),

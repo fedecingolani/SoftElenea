@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tester_app/config.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_despacho_provider.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
+import 'package:robot_soft/config.dart';
+import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
+import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class Despacho extends StatefulWidget {
   Despacho({Key? key}) : super(key: key);
@@ -26,17 +26,22 @@ class _DespachoState extends State<Despacho> {
   @override
   void dispose() {
     print('dispose despacho');
-    super.dispose();
     timer?.cancel();
+    print('timer despacho cancelado: ${timer?.isActive}');
+    super.dispose();
   }
 
   void initGetData() async {
     await context.read<DespachoProvider>().getListaDespacho().catchError(
       (onError) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de Despachos. $onError')));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de Despachos. $onError')));
+        }
       },
     );
-    timer = Timer.periodic(Duration(seconds: Config.TIMER_DESPACHO), (timer) async {
+
+    timer = Timer.periodic(Duration(seconds: context.read<Config>().timerDespacho), (timer) async {
+      if (mounted == false) return;
       await context.read<DespachoProvider>().getListaDespacho().catchError(
         (onError) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de Despachos. $onError')));
@@ -47,6 +52,7 @@ class _DespachoState extends State<Despacho> {
 
   @override
   Widget build(BuildContext context) {
+    bool cargando = context.watch<DespachoProvider>().cargandoDespachos;
     return Stack(children: [
       Align(
         alignment: Alignment.bottomRight,
@@ -54,7 +60,7 @@ class _DespachoState extends State<Despacho> {
           padding: const EdgeInsets.only(right: 20, bottom: 20),
           child: CircleAvatar(
             radius: 10,
-            backgroundColor: context.watch<DespachoProvider>().cargandoDespachos == true ? Colors.red : Colors.green,
+            backgroundColor: cargando == true ? Colors.red : Colors.green,
           ),
         ),
       ),
@@ -146,6 +152,7 @@ class _DespachoState extends State<Despacho> {
                         context.read<DespachoProvider>().despachoSeleccionado(e);
                       } else {
                         context.read<DespachoProvider>().idSeleccionado = -1;
+                        context.read<DespachoProvider>().despachoSeleccionado(null);
                       }
                     },
                     selected: context.watch<DespachoProvider>().idSeleccionado == e.idDespacho,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tester_app/medidas.dart';
+import 'package:robot_soft/medidas.dart';
 
 import '../retirar_despacho_provider.dart';
 import '../retirar_mer_provider.dart';

@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:tester_app/config.dart';
-import 'package:tester_app/retirar_mercaderia/models/model_getDespachos.dart';
-import 'package:tester_app/retirar_mercaderia/models/model_getProductos.dart';
-import 'package:tester_app/retirar_mercaderia/repositorio_api.dart';
+import 'package:robot_soft/config.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getDespachos.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
+import 'package:robot_soft/retirar_mercaderia/repositorio_api.dart';
 
 class DespachoProvider extends ChangeNotifier {
   List<ModelGetDespachos> _listaDespachos = [];
@@ -37,6 +37,7 @@ class DespachoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Arma un despacho con los productos seleccionados y lo guarda en la base de datos.
   Future<ModelGetDespachos> armarDespachos(List<ModelGetProductos> lista) async {
     try {
       armandoDespacho = true;
@@ -54,10 +55,9 @@ class DespachoProvider extends ChangeNotifier {
     }
   }
 
+  /// Obtiene la lista de despachos de la base de datos. Cambia el estado de [cargandoDespachos] a true mientras se obtiene la lista.
   Future<void> getListaDespacho() async {
     try {
-      final rand = new Random();
-
       cargandoDespachos = true;
       listaDespachos = await RepositorioApi.getDespachos();
       cargandoDespachos = false;
@@ -68,18 +68,8 @@ class DespachoProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getProductStock(String codigoBarra) async {
-    try {
-      cargandoDespachos = true;
-      listaDespachos = await RepositorioApi.getDespachos();
-      cargandoDespachos = false;
-    } catch (e) {
-      print(e.toString());
-      cargandoDespachos = false;
-      return Future.error(e.toString());
-    }
-  }
-
+  /// Cambia el estado de un despacho en la base de datos.
+  /// [id] es el id del despacho. [estado] es el estado al que se quiere cambiar.
   void cambiarEstado(int id, int estado) async {
     await RepositorioApi.cambiarEstadoDespacho(id, estado);
     getListaDespacho();
@@ -100,7 +90,7 @@ class DespachoProvider extends ChangeNotifier {
       RepositorioApi.getProductoTipo2(codigoBarra).then((value) {
         productoStock = value;
       }).catchError((onError) {
-        throw onError;
+        Future.error(onError);
       });
 
       return 0;
@@ -123,6 +113,7 @@ class DespachoProvider extends ChangeNotifier {
     }
   }
 
+  /// Lista que contiene los productos que se van a agregar al despacho.
   List<ModelGetProductos> _listaProductosDetalle = [];
   List<ModelGetProductos> get listaProductosDetalle => _listaProductosDetalle;
   set listaProductosDetalle(List<ModelGetProductos> value) {
@@ -139,7 +130,7 @@ class DespachoProvider extends ChangeNotifier {
   void despachoSeleccionado(ModelGetDespachos? data) async {
     if (data != null) {
       if (data.codigoBarra1 != null) {
-        listaProductosDetalle = [];
+        _listaProductosDetalle = [];
         await RepositorioApi.getProductos(dato: data.codigoBarra1!).then((value) {
           if (value != null) {
             final x = value.where((element) => element.codigoUbicacion == data.origen1).toList().first;
@@ -159,9 +150,12 @@ class DespachoProvider extends ChangeNotifier {
           throw onError;
         });
       }
+    } else {
+      listaProductosDetalle = [];
     }
   }
 
+  /// Variable para mostrar el detalle de los despachos. Guarda el id del despacho seleccionado.
   int _idSeleccionado = -1;
   int get idSeleccionado => _idSeleccionado;
   set idSeleccionado(int value) {

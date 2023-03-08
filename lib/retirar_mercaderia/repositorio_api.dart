@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:tester_app/helper.dart';
-import 'package:tester_app/retirar_mercaderia/models/model_getDespachos.dart';
-import 'package:tester_app/retirar_mercaderia/models/model_getProductos.dart';
+import 'package:robot_soft/helper.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getDespachos.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getPedidos.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:tester_app/config.dart';
+import 'package:robot_soft/config.dart';
 
 class RepositorioApi {
   /// Función que obtiene los productos de la base de datos.
@@ -17,11 +18,11 @@ class RepositorioApi {
 
       /// Busqueda por codigo de barras
       if (dato.length > 7 && Helper.isNumeric(dato)) {
-        url = '${Config.IP_SERVER}/api/productos?cb=$dato';
+        url = '${Config().serverIP}/api/productos?cb=$dato';
       }
 
       if (dato.length <= 7) {
-        url = '${Config.IP_SERVER}/api/UbicacionBusqueda?texto=$dat&esferico=$esferico&cilindrico=$cilindrico&diameter=$diametro';
+        url = '${Config().serverIP}/api/UbicacionBusqueda?texto=$dat&esferico=$esferico&cilindrico=$cilindrico&diameter=$diametro';
       }
 
       if (url == '') {
@@ -44,10 +45,10 @@ class RepositorioApi {
     }
   }
 
-  /// Función que obtiene los despachos de la base de datos.
+  /// Función que graba los despachos de la base de datos.
   static Future<ModelGetDespachos> createDespacho(ModelGetDespachos data) async {
     try {
-      final String url = "${Config.IP_SERVER}/api/ArmaDespachoEgreso?origen1=${data.origen1}&codbarra1=${data.codigoBarra1}&cantidad1=${data.cantidad1}&origen2=${data.origen2}&codbarra2=${data.codigoBarra2}&cantidad2=${data.cantidad2}&pedido=${data.pedido}";
+      final String url = "${Config().serverIP}/api/ArmaDespachoEgreso?origen1=${data.origen1}&codbarra1=${data.codigoBarra1}&cantidad1=${data.cantidad1}&origen2=${data.origen2}&codbarra2=${data.codigoBarra2}&cantidad2=${data.cantidad2}&pedido=${data.pedido}";
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -70,7 +71,7 @@ class RepositorioApi {
   /// Función que obtiene los despachos de la base de datos.
   static Future<List<ModelGetDespachos>> getDespachos() async {
     try {
-      final String url = '${Config.IP_SERVER}/api/Despachos?estado=-2';
+      final String url = '${Config().serverIP}/api/Despachos?estado=-2';
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -91,7 +92,7 @@ class RepositorioApi {
   /// Función que cambia los estados de los despachos de la base de datos.
   static Future<String?> cambiarEstadoDespacho(int idDespacho, int estado) async {
     try {
-      final String url = '${Config.IP_SERVER}/api/Despacho/CambiaEstado?iddespacho=$idDespacho&estado=$estado';
+      final String url = '${Config().serverIP}/api/Despacho/CambiaEstado?iddespacho=$idDespacho&estado=$estado';
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -110,7 +111,7 @@ class RepositorioApi {
   /// Funcion que consulta los despachos con tipo 2, devuelve producto
   static Future<ModelGetProductos> getProductoTipo2(String codigoBarra) async {
     try {
-      final String url = '${Config.IP_SERVER}/api/ConsultaCBDisponiblesT2?cb=$codigoBarra';
+      final String url = '${Config().serverIP}/api/ConsultaCBDisponiblesT2?cb=$codigoBarra';
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -132,7 +133,7 @@ class RepositorioApi {
   ///Funcion que actualiza el stock del producto
   static Future<void> actualizarProducto(ModelGetProductos productos) async {
     try {
-      final String url = '${Config.IP_SERVER}/api/productos';
+      final String url = '${Config().serverIP}/api/productos';
       final response = await http.put(Uri.parse(url),
           headers: {
             'Content-Type': 'application/json'
@@ -142,6 +143,44 @@ class RepositorioApi {
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         final data = jsonDecode(response.body);
         print(data);
+      } else {
+        return Future.error('Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      return Future.error('TryCatch: ${e.toString()}');
+    }
+  }
+
+  ///¡¡¡FUNCION ROBOT!!!
+  ///Funcion que pone en funcionamiento el robot.
+  static Future<void> robotDespacho(String idDespacho) async {
+    try {
+      final String url = '${Config().serverIP}/api/DespachoIDRun?idDespacho=$idDespacho';
+      final response = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json'
+      });
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final data = jsonDecode(response.body);
+        print(data);
+      } else {
+        return Future.error('Status Code: ${response.statusCode}');
+      }
+    } catch (e) {
+      return Future.error('TryCatch: ${e.toString()}');
+    }
+  }
+
+  ///Función que traer las ordenes - pedidos.
+  static Future<List<Pedidos>> pedidosOrdenes() async {
+    try {
+      final String url = '${Config().serverIP}/api/clientesOrders';
+      final response = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json'
+      });
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        return pedidosFromJson(response.body);
       } else {
         return Future.error('Status Code: ${response.statusCode}');
       }

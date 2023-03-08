@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tester_app/medidas.dart';
-import 'package:tester_app/retirar_mercaderia/models/model_getProductos.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_despacho_provider.dart';
-import 'package:tester_app/retirar_mercaderia/retirar_mer_provider.dart';
+import 'package:robot_soft/medidas.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
+import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
+import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class DetalleDespacho extends StatefulWidget {
   const DetalleDespacho({Key? key}) : super(key: key);

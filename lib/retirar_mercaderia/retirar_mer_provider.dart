@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tester_app/retirar_mercaderia/models/model_getProductos.dart';
-import 'package:tester_app/retirar_mercaderia/repositorio_api.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
+import 'package:robot_soft/retirar_mercaderia/repositorio_api.dart';
 
 class RetirarMerProvider extends ChangeNotifier {
   String _txtBusqueda = '';

@@ -11,8 +11,9 @@ class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 250,
       margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.85), borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [
           Container(
@@ -50,7 +51,7 @@ class _MenuState extends State<Menu> {
               Navigator.pushReplacementNamed(context, '/stock');
             },
           ),
-          Spacer(),
+          const Spacer(),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Configuracion'),
@@ -58,6 +59,7 @@ class _MenuState extends State<Menu> {
               Navigator.pushNamed(context, '/settings');
             },
           ),
+          const Center(child: Text('Version 1.0.0 - Darkflow SRL')),
         ],
       ),
     );
