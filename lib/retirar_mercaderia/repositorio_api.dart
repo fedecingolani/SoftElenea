@@ -16,12 +16,7 @@ class RepositorioApi {
       final String dat = dato.replaceAll(" ", ";");
       String url = '';
 
-      /// Busqueda por codigo de barras
-      if (dato.length > 7 && Helper.isNumeric(dato)) {
-        url = '${Config().serverIP}/api/productos?cb=$dato';
-      }
-
-      if (dato.length <= 7) {
+      if (dato.isNotEmpty) {
         url = '${Config().serverIP}/api/UbicacionBusqueda?texto=$dat&esferico=$esferico&cilindrico=$cilindrico&diameter=$diametro';
       }
 

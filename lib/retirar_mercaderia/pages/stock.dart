@@ -21,6 +21,9 @@ class _DescuentoStockState extends State<DescuentoStock> {
   void initState() {
     controller.addListener(() {
       context.read<DespachoProvider>().txtCodigoBarraStock = controller.text;
+      if (controller.text.isEmpty) {
+        context.read<DespachoProvider>().productoStock = null;
+      }
     });
 
     _focusNode.addListener(() {
@@ -55,27 +58,34 @@ class _DescuentoStockState extends State<DescuentoStock> {
               Expanded(
                 flex: 4,
                 child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  width: 210,
+                  height: 35,
+                  child: TextField(
+                    focusNode: _focusNode,
+                    controller: controller,
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
                     ),
-                    width: 210,
-                    height: 35,
-                    child: TextField(
-                        focusNode: _focusNode,
-                        controller: controller,
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                        ),
-                        onEditingComplete: () {
-                          context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
-                            (onError) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
-                            },
-                          );
-                        })),
+                    onEditingComplete: () => context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
+                      (onError) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$onError')));
+                      },
+                    ),
+                    // onEditingComplete: () async {
+                    //   var a = await context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
+                    //     (onError) {
+                    //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
+                    //     },
+                    //   );
+                    // },
+                  ),
+                ),
               ),
               Tooltip(
                 message: 'Sube Stock',
@@ -138,7 +148,7 @@ class _DescuentoStockState extends State<DescuentoStock> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      context.watch<DespachoProvider>().productoStock?.nombre ?? '',
+                      context.watch<DespachoProvider>().productoStock?.nombre ?? 'Nombre Producto',
                     ),
                   )),
               Expanded(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_getPedidos.dart';
 import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
 import 'package:robot_soft/retirar_mercaderia/repositorio_api.dart';
 
@@ -86,5 +87,23 @@ class RetirarMerProvider extends ChangeNotifier {
   void eliminarProductoBandeja(int index) {
     _listaProductosFiltrados.removeAt(index);
     notifyListeners();
+  }
+
+  List<Pedidos> _listaPedidos = [];
+  List<Pedidos> get listaPedidos => _listaPedidos;
+  set listaPedidos(List<Pedidos> value) {
+    _listaPedidos = value;
+    notifyListeners();
+  }
+
+  Future<void> getPedidos() async {
+    try {
+      listaPedidos = [];
+      listaPedidos = await RepositorioApi.pedidosOrdenes();
+      print(listaPedidos.length);
+    } catch (e) {
+      print(e.toString());
+      return Future.error(e.toString());
+    }
   }
 }

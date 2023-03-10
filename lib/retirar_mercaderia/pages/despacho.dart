@@ -149,7 +149,11 @@ class _DespachoState extends State<Despacho> {
                     onSelectChanged: (value) {
                       if (value == true) {
                         context.read<DespachoProvider>().idSeleccionado = e.idDespacho!;
-                        context.read<DespachoProvider>().despachoSeleccionado(e);
+                        context.read<DespachoProvider>().despachoSeleccionado(e).catchError(
+                          (onError) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
+                          },
+                        );
                       } else {
                         context.read<DespachoProvider>().idSeleccionado = -1;
                         context.read<DespachoProvider>().despachoSeleccionado(null);

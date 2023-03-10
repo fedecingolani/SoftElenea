@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -20,7 +21,9 @@ class DespachoProvider extends ChangeNotifier {
   bool get cargandoDespachos => _cargandoDespachos;
   set cargandoDespachos(bool value) {
     _cargandoDespachos = value;
-    notifyListeners();
+    Future.delayed(Duration(milliseconds: 500), () {
+      notifyListeners();
+    });
   }
 
   String _txtCodigoBarraStock = '';
@@ -38,19 +41,24 @@ class DespachoProvider extends ChangeNotifier {
   }
 
   /// Arma un despacho con los productos seleccionados y lo guarda en la base de datos.
-  Future<ModelGetDespachos> armarDespachos(List<ModelGetProductos> lista) async {
+  Future<void> armarDespachos(List<ModelGetProductos> lista) async {
     try {
+      if (lista.isEmpty) {
+        return Future.error('No hay productos seleccionados');
+      }
       armandoDespacho = true;
       ModelGetDespachos despacho = ModelGetDespachos(cantidad1: 1, codigoBarra1: lista[0].codigoBarra, origen1: lista[0].codigoUbicacion, cantidad2: lista.length == 2 ? 1 : 0, codigoBarra2: lista.length == 2 ? lista[1].codigoBarra : '', origen2: lista.length == 2 ? lista[1].codigoUbicacion : '', pedido: 0);
 
-      final resu = await RepositorioApi.createDespacho(despacho).catchError((onError) {
+      await RepositorioApi.createDespacho(despacho).then((value) {
+        armandoDespacho = false;
+        return value;
+      }).catchError((onError) {
+        armandoDespacho = false;
         throw onError;
       });
-      armandoDespacho = false;
-      return resu;
     } catch (e) {
       armandoDespacho = false;
-      print(e.toString());
+
       return Future.error(e.toString());
     }
   }
@@ -85,15 +93,12 @@ class DespachoProvider extends ChangeNotifier {
   /// Función que obtiene los despachos de la base de datos.
   /// Devuelve entero con el stock nuevo.
   /// [cantidad] es la cantidad que se va a retirar del stock. si es negativo, se suma al stock.
-  Future<int> updateStock(String codigoBarra, int cantidad) async {
+  Future<void> updateStock(String codigoBarra, int cantidad) async {
     try {
-      RepositorioApi.getProductoTipo2(codigoBarra).then((value) {
+      await RepositorioApi.getProductoTipo2(codigoBarra).then((value) {
         productoStock = value;
-      }).catchError((onError) {
-        Future.error(onError);
       });
 
-      return 0;
       // final String url = '${Config.IP_SERVER}/api/ConsultaCBDisponiblesT2?cb=$codigoBarra';
 
       // final response = await http.get(Uri.parse(url), headers: {
@@ -109,7 +114,7 @@ class DespachoProvider extends ChangeNotifier {
       //   return Future.error('Status Code: ${response.statusCode}');
       // }
     } catch (e) {
-      return Future.error('TryCatch: ${e.toString()}');
+      return Future.error('Error STOCK: ${e.toString()}');
     }
   }
 
@@ -127,32 +132,34 @@ class DespachoProvider extends ChangeNotifier {
   }
 
   /// Genera las vistas para el detalle de los articulos que están en los despachos.
-  void despachoSeleccionado(ModelGetDespachos? data) async {
-    if (data != null) {
-      if (data.codigoBarra1 != null) {
-        _listaProductosDetalle = [];
-        await RepositorioApi.getProductos(dato: data.codigoBarra1!).then((value) {
-          if (value != null) {
-            final x = value.where((element) => element.codigoUbicacion == data.origen1).toList().first;
-            addListaProductoDeatalle(x);
-          }
-        }).catchError((onError) {
-          throw onError;
-        });
+  Future<String?> despachoSeleccionado(ModelGetDespachos? data) async {
+    try {
+      if (data != null) {
+        if (data.codigoBarra1!.isNotEmpty) {
+          _listaProductosDetalle = [];
+          await RepositorioApi.getProductos(dato: data.codigoBarra1!).then((value) {
+            if (value != null) {
+              final x = value.where((element) => element.codigoUbicacion == data.origen1).toList().first;
+              addListaProductoDeatalle(x);
+            }
+          });
+        }
+        if (data.codigoBarra2!.isNotEmpty) {
+          await RepositorioApi.getProductos(dato: data.codigoBarra2!).then((value) {
+            if (value != null) {
+              final x = value.where((element) => element.codigoUbicacion == data.origen2).toList().first;
+              addListaProductoDeatalle(x);
+            }
+          });
+        }
+        return '';
+      } else {
+        listaProductosDetalle = [];
       }
-      if (data.codigoBarra2 != null) {
-        await RepositorioApi.getProductos(dato: data.codigoBarra2!).then((value) {
-          if (value != null) {
-            final x = value.where((element) => element.codigoUbicacion == data.origen2).toList().first;
-            addListaProductoDeatalle(x);
-          }
-        }).catchError((onError) {
-          throw onError;
-        });
-      }
-    } else {
-      listaProductosDetalle = [];
+    } catch (e) {
+      return Future.error(e.toString());
     }
+    return null;
   }
 
   /// Variable para mostrar el detalle de los despachos. Guarda el id del despacho seleccionado.

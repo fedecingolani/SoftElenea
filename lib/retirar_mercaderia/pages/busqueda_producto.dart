@@ -143,7 +143,7 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
                         ),
                         onEditingComplete: () => context.read<RetirarMerProvider>().getListaProductos().catchError(
                           (onError) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de productos. $onError')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$onError')));
                           },
                         ),
                       ),
@@ -165,7 +165,17 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
                       //backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(220, 253, 236, 0)),
                       foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      String codigo = await dialogPedidos(context);
+                      if (codigo != null) {
+                        _textBusqueda.text = codigo;
+                        // context.read<RetirarMerProvider>().getListaProductos().catchError(
+                        //   (onError) {
+                        //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$onError')));
+                        //   },
+                        // );
+                      }
+                    },
                     child: const Text(
                       'Agrupados',
                       textAlign: TextAlign.center,
@@ -185,6 +195,44 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
             ),
           )),
     );
+  }
+
+  Future<dynamic> dialogPedidos(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (_) => SizedBox(
+              height: 400,
+              width: 300,
+              child: AlertDialog(
+                content: FutureBuilder(
+                  future: context.read<RetirarMerProvider>().getPedidos(),
+                  initialData: [],
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Text('${snapshot.error}');
+                    }
+                    if (context.read<RetirarMerProvider>().listaPedidos.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: context.read<RetirarMerProvider>().listaPedidos.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var data = context.read<RetirarMerProvider>().listaPedidos[index];
+                          return ListTile(
+                            title: Text('${data.optica} - ${data.pedido}'),
+                            onTap: () {
+                              Navigator.of(context).pop(snapshot.data[index].codigo);
+                            },
+                          );
+                        },
+                      );
+                    }
+                    return const Text('No hay pedidos');
+                  },
+                ),
+              ),
+            ));
   }
 
   Container cajaTexto({required TextEditingController controller, required FocusNode focus, String tecla = ''}) {

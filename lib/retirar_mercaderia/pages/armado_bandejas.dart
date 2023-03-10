@@ -76,7 +76,7 @@ class _ArmadoBandejasState extends State<ArmadoBandejas> {
                         foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
                       ),
                       onPressed: () => context.read<DespachoProvider>().armarDespachos(context.read<RetirarMerProvider>().listaProductosFiltrados).catchError((error) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se produjo algun error. $error')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$error')));
                           }).whenComplete(() => context.read<DespachoProvider>().getListaDespacho()),
                       child: const Text('Generar Despacho')),
                 ),

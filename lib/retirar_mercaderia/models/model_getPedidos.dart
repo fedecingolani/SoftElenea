@@ -19,9 +19,9 @@ class Pedidos {
 
   String ncliente;
   String optica;
-  int pedido;
+  double pedido;
   String bandeja;
-  int proceso;
+  double proceso;
 
   factory Pedidos.fromJson(Map<String, dynamic> json) => Pedidos(
         ncliente: json["ncliente"],
