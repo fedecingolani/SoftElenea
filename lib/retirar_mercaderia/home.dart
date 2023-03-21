@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:robot_soft/menu/menu.dart';
@@ -22,8 +21,6 @@ class RetirarMercaderia extends StatefulWidget {
 class _RetirarMercaderiaState extends State<RetirarMercaderia> {
   @override
   void initState() {
-    // TODO: implement initState
-
     super.initState();
   }
 
@@ -51,8 +48,8 @@ class _RetirarMercaderiaState extends State<RetirarMercaderia> {
                     const SizedBox(height: 75, width: double.infinity, child: BusquedaProducto()),
                     const SizedBox(height: 375, width: double.infinity, child: BusquedaResultados()),
                     Row(
-                      children: [
-                        const Expanded(
+                      children: const [
+                        Expanded(
                           flex: 1,
                           child: SizedBox(height: 300, width: double.infinity, child: ArmadoBandejas()),
                         ),
@@ -63,7 +60,7 @@ class _RetirarMercaderiaState extends State<RetirarMercaderia> {
                       ],
                     ),
                     Row(
-                      children: [
+                      children: const [
                         Expanded(
                           flex: 1,
                           child: SizedBox(height: 250, width: double.infinity, child: DescuentoStock()),

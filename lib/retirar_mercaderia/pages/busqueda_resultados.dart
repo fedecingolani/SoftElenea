@@ -14,7 +14,7 @@ class _BusquedaResultadosState extends State<BusquedaResultados> {
   @override
   Widget build(BuildContext context) {
     final data = context.watch<RetirarMerProvider>().listaProductos;
-    print('dibuja pantalla resultados');
+    debugPrint('dibuja pantalla resultados');
     return Container(
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
@@ -61,7 +61,7 @@ class _BusquedaResultadosState extends State<BusquedaResultados> {
                           }
                           context.read<RetirarMerProvider>().listaProductosFiltrados.contains(e) ? context.read<RetirarMerProvider>().removeProductoFiltrado(e) : context.read<RetirarMerProvider>().addProductoFiltrado(e);
                           setState(() {
-                            print('seleccionado: ${e.codigoBarra}');
+                            debugPrint('seleccionado: ${e.codigoBarra}');
                           });
                         },
                         selected: context.watch<RetirarMerProvider>().listaProductosFiltrados.contains(e),

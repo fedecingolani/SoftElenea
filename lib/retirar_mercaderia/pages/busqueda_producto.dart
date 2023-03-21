@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_soft/config.dart';
 import 'package:robot_soft/medidas.dart';
-import 'package:robot_soft/retirar_mercaderia/repositorio_api.dart';
+
 import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class BusquedaProducto extends StatefulWidget {
@@ -206,7 +206,6 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
               child: AlertDialog(
                 content: FutureBuilder(
                   future: context.read<RetirarMerProvider>().getPedidos(),
-                  initialData: [],
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());

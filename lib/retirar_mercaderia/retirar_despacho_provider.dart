@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:robot_soft/config.dart';
-import 'package:robot_soft/retirar_mercaderia/models/model_getDespachos.dart';
-import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
+
+import 'package:robot_soft/retirar_mercaderia/models/mode_get_despachos.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_get_productos.dart';
 import 'package:robot_soft/retirar_mercaderia/repositorio_api.dart';
 
 class DespachoProvider extends ChangeNotifier {
@@ -21,7 +20,7 @@ class DespachoProvider extends ChangeNotifier {
   bool get cargandoDespachos => _cargandoDespachos;
   set cargandoDespachos(bool value) {
     _cargandoDespachos = value;
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       notifyListeners();
     });
   }
@@ -70,7 +69,7 @@ class DespachoProvider extends ChangeNotifier {
       listaDespachos = await RepositorioApi.getDespachos();
       cargandoDespachos = false;
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       cargandoDespachos = false;
       return Future.error(e.toString());
     }
@@ -132,34 +131,32 @@ class DespachoProvider extends ChangeNotifier {
   }
 
   /// Genera las vistas para el detalle de los articulos que están en los despachos.
-  Future<String?> despachoSeleccionado(ModelGetDespachos? data) async {
+  Future<void> despachoSeleccionado(ModelGetDespachos? data) async {
     try {
-      if (data != null) {
-        if (data.codigoBarra1!.isNotEmpty) {
-          _listaProductosDetalle = [];
-          await RepositorioApi.getProductos(dato: data.codigoBarra1!).then((value) {
-            if (value != null) {
-              final x = value.where((element) => element.codigoUbicacion == data.origen1).toList().first;
-              addListaProductoDeatalle(x);
-            }
-          });
-        }
-        if (data.codigoBarra2!.isNotEmpty) {
-          await RepositorioApi.getProductos(dato: data.codigoBarra2!).then((value) {
-            if (value != null) {
-              final x = value.where((element) => element.codigoUbicacion == data.origen2).toList().first;
-              addListaProductoDeatalle(x);
-            }
-          });
-        }
-        return '';
-      } else {
+      if (data == null) {
         listaProductosDetalle = [];
+        return Future.error('No se seleccionó ningún despacho');
+      }
+      if (data.codigoBarra1!.isNotEmpty) {
+        _listaProductosDetalle = [];
+        await RepositorioApi.getProductos(dato: data.codigoBarra1!).then((value) {
+          if (value != null) {
+            final x = value.where((element) => element.codigoUbicacion == data.origen1).toList().first;
+            addListaProductoDeatalle(x);
+          }
+        });
+      }
+      if (data.codigoBarra2!.isNotEmpty) {
+        await RepositorioApi.getProductos(dato: data.codigoBarra2!).then((value) {
+          if (value != null) {
+            final x = value.where((element) => element.codigoUbicacion == data.origen2).toList().first;
+            addListaProductoDeatalle(x);
+          }
+        });
       }
     } catch (e) {
       return Future.error(e.toString());
     }
-    return null;
   }
 
   /// Variable para mostrar el detalle de los despachos. Guarda el id del despacho seleccionado.

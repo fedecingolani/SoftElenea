@@ -5,7 +5,7 @@ import 'package:robot_soft/medidas.dart';
 import '../retirar_despacho_provider.dart';
 import '../retirar_mer_provider.dart';
 
-import '.././models/model_getProductos.dart';
+import '../models/model_get_productos.dart';
 
 class ArmadoBandejas extends StatefulWidget {
   const ArmadoBandejas({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _ArmadoBandejasState extends State<ArmadoBandejas> {
   @override
   Widget build(BuildContext context) {
     var data = context.watch<RetirarMerProvider>().listaProductosFiltrados;
-    print('Dibuja ArmadoBandejas');
+    debugPrint('Dibuja ArmadoBandejas');
     return Stack(children: [
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +58,7 @@ class _ArmadoBandejasState extends State<ArmadoBandejas> {
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(0.2),
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+              borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

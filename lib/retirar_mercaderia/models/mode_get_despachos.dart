@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final modelGetDespachos = modelGetDespachosFromJson(jsonString);
-
 import 'dart:convert';
 
 List<ModelGetDespachos> modelGetDespachosFromJson(String str) => List<ModelGetDespachos>.from(json.decode(str).map((x) => ModelGetDespachos.fromJson(x)));

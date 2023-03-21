@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:robot_soft/retirar_mercaderia/models/model_getPedidos.dart';
-import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
+import 'package:robot_soft/retirar_mercaderia/models/mode_get_pedidos.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_get_productos.dart';
 import 'package:robot_soft/retirar_mercaderia/repositorio_api.dart';
 
 class RetirarMerProvider extends ChangeNotifier {
@@ -74,7 +74,7 @@ class RetirarMerProvider extends ChangeNotifier {
 
       cargandoProductos = false;
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       cargandoProductos = false;
       return Future.error(e.toString());
     }
@@ -100,9 +100,9 @@ class RetirarMerProvider extends ChangeNotifier {
     try {
       listaPedidos = [];
       listaPedidos = await RepositorioApi.pedidosOrdenes();
-      print(listaPedidos.length);
+      debugPrint(listaPedidos.length.toString());
     } catch (e) {
-      print(e.toString());
+      debugPrint(e.toString());
       return Future.error(e.toString());
     }
   }

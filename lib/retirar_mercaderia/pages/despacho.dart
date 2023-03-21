@@ -8,7 +8,7 @@ import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
 import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class Despacho extends StatefulWidget {
-  Despacho({Key? key}) : super(key: key);
+  const Despacho({Key? key}) : super(key: key);
 
   @override
   State<Despacho> createState() => _DespachoState();
@@ -19,19 +19,20 @@ class _DespachoState extends State<Despacho> {
 
   @override
   void initState() {
-    initGetData();
+    int timerDespacho = context.read<Config>().timerDespacho;
+    initGetData(timerDespacho);
     super.initState();
   }
 
   @override
   void dispose() {
-    print('dispose despacho');
+    debugPrint('dispose despacho');
     timer?.cancel();
-    print('timer despacho cancelado: ${timer?.isActive}');
+    debugPrint('timer despacho cancelado: ${timer?.isActive}');
     super.dispose();
   }
 
-  void initGetData() async {
+  void initGetData(int timerDespacho) async {
     await context.read<DespachoProvider>().getListaDespacho().catchError(
       (onError) {
         if (mounted) {
@@ -40,7 +41,7 @@ class _DespachoState extends State<Despacho> {
       },
     );
 
-    timer = Timer.periodic(Duration(seconds: context.read<Config>().timerDespacho), (timer) async {
+    timer = Timer.periodic(Duration(seconds: timerDespacho), (timer) async {
       if (mounted == false) return;
       await context.read<DespachoProvider>().getListaDespacho().catchError(
         (onError) {
@@ -185,9 +186,9 @@ class _DespachoState extends State<Despacho> {
                           padding: const EdgeInsets.all(0),
                           itemBuilder: (_) {
                             return [
-                              PopupMenuItem(onTap: () => context.read<DespachoProvider>().cambiarEstado(e.idDespacho!, 0), child: Text('Inicio'), value: 1),
-                              PopupMenuItem(onTap: () => context.read<DespachoProvider>().cambiarEstado(e.idDespacho!, 2), child: Text('Cambio de Stock'), value: 2),
-                              PopupMenuItem(onTap: () => context.read<DespachoProvider>().cambiarEstado(e.idDespacho!, 3), child: Text('Finalizado'), value: 3),
+                              PopupMenuItem(onTap: () => context.read<DespachoProvider>().cambiarEstado(e.idDespacho!, 0), value: 1, child: const Text('Inicio')),
+                              PopupMenuItem(onTap: () => context.read<DespachoProvider>().cambiarEstado(e.idDespacho!, 2), value: 2, child: const Text('Cambio de Stock')),
+                              PopupMenuItem(onTap: () => context.read<DespachoProvider>().cambiarEstado(e.idDespacho!, 3), value: 3, child: const Text('Finalizado')),
                             ];
                           },
                         ),

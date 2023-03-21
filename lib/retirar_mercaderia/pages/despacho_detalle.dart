@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_soft/medidas.dart';
-import 'package:robot_soft/retirar_mercaderia/models/model_getProductos.dart';
+import 'package:robot_soft/retirar_mercaderia/models/model_get_productos.dart';
 import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
-import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class DetalleDespacho extends StatefulWidget {
   const DetalleDespacho({Key? key}) : super(key: key);
@@ -42,7 +41,7 @@ class _DetalleDespachoState extends State<DetalleDespacho> {
             Expanded(
                 flex: 1,
                 child: Container(
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                   height: 85,
                   margin: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
@@ -113,7 +112,7 @@ class _DetalleDespachoState extends State<DetalleDespacho> {
 
   Container cajaDatos({required BuildContext context, String nombre = '', String texto = ''}) {
     return Container(
-      padding: EdgeInsets.all(3),
+      padding: const EdgeInsets.all(3),
       height: 47,
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(

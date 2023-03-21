@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:robot_soft/medidas.dart';
 import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
@@ -15,10 +14,11 @@ class _DescuentoStockState extends State<DescuentoStock> {
   TextEditingController controller = TextEditingController();
   bool bajaStock = false;
 
-  FocusNode _focusNode = FocusNode();
+  late FocusNode _focusNode;
 
   @override
   void initState() {
+    _focusNode = FocusNode();
     controller.addListener(() {
       context.read<DespachoProvider>().txtCodigoBarraStock = controller.text;
       if (controller.text.isEmpty) {

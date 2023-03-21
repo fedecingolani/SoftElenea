@@ -43,7 +43,7 @@ class Config extends ChangeNotifier {
   }
 
   Future<void> initConfig() async {
-    print('Proceso de inicialización de Config');
+    debugPrint('Proceso de inicialización de Config');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     ipServer = prefs.getString('ip_server') ?? 'http://179.42.160.161:8080/rpeapi';
     _widthMenu = prefs.getDouble('width_menu') ?? 275;
