@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Config extends ChangeNotifier {
-  String ipServer = 'http://179.42.160.161:8080/rpeapi';
-  String get serverIP => ipServer;
+  static String ipServer = 'http://179.42.160.161:8080/rpeapi';
+  static String get serverIP => ipServer;
+
   Future<void> setServerIP(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('ip_server', value);
@@ -48,6 +49,6 @@ class Config extends ChangeNotifier {
     ipServer = prefs.getString('ip_server') ?? 'http://179.42.160.161:8080/rpeapi';
     _widthMenu = prefs.getDouble('width_menu') ?? 275;
     _drawer = prefs.getBool('drawer') ?? false;
-    _timerDespacho = prefs.getInt('timer_despacho') ?? 10;
+    _timerDespacho = prefs.getInt('timer_despacho') ?? 30;
   }
 }

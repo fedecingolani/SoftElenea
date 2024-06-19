@@ -26,7 +26,7 @@ void main() async {
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
-
+      await windowManager.maximize();
       await windowManager.focus();
     });
     await windowManager.ensureInitialized();
@@ -53,13 +53,16 @@ class MyApp extends StatelessWidget {
               title: 'Optica Elena',
               theme: ThemeData(
                 useMaterial3: true,
-                colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark, primaryColorDark: Colors.amber.shade500, primarySwatch: Colors.amber),
+                colorScheme: ColorScheme.fromSwatch(
+                  brightness: Brightness.dark,
+                  primarySwatch: Colors.amber,
+                ),
               ),
               initialRoute: '/retirar_mercaderia',
               routes: {
                 '/retirar_mercaderia': (context) => const RetirarMercaderia(),
-                '/ingresar_mercaderia': (context) => const IngresarMercaderia(),
-                '/settings': (context) => const SettingPage(),
+                '/ingresar_mercaderia': (context) => IngresarMercaderia(),
+                '/settings': (context) => SettingPage(),
               });
         });
   }

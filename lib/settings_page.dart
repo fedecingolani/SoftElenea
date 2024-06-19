@@ -33,7 +33,7 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    ipServerController.text = context.watch<Config>().serverIP;
+    ipServerController.text = Config.ipServer;
     timerDespacho.text = context.watch<Config>().timerDespacho.toString();
     widthMenu.text = context.watch<Config>().widthMenu.toString();
     drawer = context.watch<Config>().drawerMenu;

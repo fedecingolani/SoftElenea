@@ -12,7 +12,7 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     return Container(
       width: 250,
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
       decoration: BoxDecoration(color: Colors.grey.withOpacity(0.85), borderRadius: BorderRadius.circular(10)),
       child: Column(
         children: [

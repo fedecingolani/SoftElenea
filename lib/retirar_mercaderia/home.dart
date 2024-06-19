@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:robot_soft/menu/menu.dart';
@@ -19,64 +20,147 @@ class RetirarMercaderia extends StatefulWidget {
 }
 
 class _RetirarMercaderiaState extends State<RetirarMercaderia> {
+  final _focusBusquedaProducto = FocusNode();
+  final _focusTextBusqueda = FocusNode();
+  final _focusTextEsf = FocusNode();
+  final _focusTextCil = FocusNode();
+  final _focusTextDiam = FocusNode();
+
+  final _focusStock = FocusNode();
+  final _focusDetalleDespacho = FocusNode();
+
+  final _busquedaResultado = FocusNode();
+  final _armadoBandejas = FocusNode();
+
+  final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
+    _focusTextBusqueda.requestFocus();
+
+    _focusDetalleDespacho.addListener(() {
+      if (_focusDetalleDespacho.hasFocus) {
+        print('focus detalle despacho');
+      }
+    });
+
     super.initState();
+  }
+
+  KeyEventResult _handleKeyEvent(FocusNode node, RawKeyEvent event) {
+    if (event.logicalKey == LogicalKeyboardKey.f1) {
+      _focusTextBusqueda.requestFocus();
+    }
+    if (event.logicalKey == LogicalKeyboardKey.f2) {
+      _focusTextEsf.requestFocus();
+    }
+    if (event.logicalKey == LogicalKeyboardKey.f3) {
+      _focusTextCil.requestFocus();
+    }
+    if (event.logicalKey == LogicalKeyboardKey.f4) {
+      _focusTextDiam.requestFocus();
+    }
+    if (event.logicalKey == LogicalKeyboardKey.f5) {
+      _focusStock.requestFocus();
+    }
+
+    return event.logicalKey == LogicalKeyboardKey.f1 ? KeyEventResult.handled : KeyEventResult.ignored;
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('rebuild');
     return SafeArea(
-      child: Scaffold(
-        drawer: const Menu(),
-        body: Center(
-            child: Row(
-          children: [
-            context.watch<Config>().drawerMenu
-                ? SizedBox(
-                    width: context.watch<Config>().widthMenu,
-                    height: double.infinity,
-                    child: const Menu(),
-                  )
-                : Container(),
-            Expanded(
-                child: SizedBox(
-              height: double.infinity,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 75, width: double.infinity, child: BusquedaProducto()),
-                    const SizedBox(height: 375, width: double.infinity, child: BusquedaResultados()),
-                    Row(
-                      children: const [
-                        Expanded(
-                          flex: 1,
-                          child: SizedBox(height: 300, width: double.infinity, child: ArmadoBandejas()),
+      child: Focus(
+        focusNode: _focusNode,
+        onKey: _handleKeyEvent,
+        child: Scaffold(
+          drawer: const Menu(),
+          body: Center(
+              child: Row(
+            children: [
+              context.watch<Config>().drawerMenu
+                  ? SizedBox(
+                      width: context.watch<Config>().widthMenu,
+                      height: double.infinity,
+                      child: const Menu(),
+                    )
+                  : Container(),
+              Expanded(
+                  child: SizedBox(
+                height: double.infinity,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          height: 75,
+                          width: double.infinity,
+                          child: BusquedaProducto(
+                            focusForm: _focusBusquedaProducto,
+                            focusTextBusqueda: _focusTextBusqueda,
+                            focusTextEsf: _focusTextEsf,
+                            focusTextCil: _focusTextCil,
+                            focusTextDiam: _focusTextDiam,
+                          )),
+                      SizedBox(
+                        height: 375,
+                        width: double.infinity,
+                        child: BusquedaResultados(
+                          focus: _busquedaResultado,
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: SizedBox(height: 300, width: double.infinity, child: Despacho()),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: const [
-                        Expanded(
-                          flex: 1,
-                          child: SizedBox(height: 250, width: double.infinity, child: DescuentoStock()),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: SizedBox(height: 250, width: double.infinity, child: DetalleDespacho()),
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                                height: 300,
+                                width: double.infinity,
+                                child: ArmadoBandejas(
+                                  focus: _armadoBandejas,
+                                )),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                                height: 300,
+                                width: double.infinity,
+                                child: Despacho(
+                                  focusNode: _focusDetalleDespacho,
+                                )),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(
+                                height: 250,
+                                width: double.infinity,
+                                child: DescuentoStock(
+                                  focusTextStock: _focusStock,
+                                )),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: SizedBox(height: 250, width: double.infinity, child: DetalleDespacho()),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ))
-          ],
-        )),
+              ))
+            ],
+          )),
+        ),
       ),
     );
   }

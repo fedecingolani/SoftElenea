@@ -8,7 +8,9 @@ import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
 import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class Despacho extends StatefulWidget {
-  const Despacho({Key? key}) : super(key: key);
+  const Despacho({required this.focusNode, Key? key}) : super(key: key);
+
+  final FocusNode focusNode;
 
   @override
   State<Despacho> createState() => _DespachoState();
@@ -36,16 +38,21 @@ class _DespachoState extends State<Despacho> {
     await context.read<DespachoProvider>().getListaDespacho().catchError(
       (onError) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de Despachos. $onError')));
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de Despachos. $onError')));
+          }
         }
       },
     );
 
     timer = Timer.periodic(Duration(seconds: timerDespacho), (timer) async {
+      debugPrint('timer despacho activo: ${timer.isActive}');
       if (mounted == false) return;
       await context.read<DespachoProvider>().getListaDespacho().catchError(
         (onError) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de Despachos. $onError')));
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: No se pudo obtener la lista de Despachos. $onError')));
+          }
         },
       );
     });
@@ -53,47 +60,55 @@ class _DespachoState extends State<Despacho> {
 
   @override
   Widget build(BuildContext context) {
-    bool cargando = context.watch<DespachoProvider>().cargandoDespachos;
-    return Stack(children: [
-      Align(
-        alignment: Alignment.bottomRight,
-        child: Padding(
-          padding: const EdgeInsets.only(right: 20, bottom: 20),
-          child: CircleAvatar(
-            radius: 10,
-            backgroundColor: cargando == true ? Colors.red : Colors.green,
+    //bool cargando = context.watch<DespachoProvider>().cargandoDespachos;
+    return Focus(
+      focusNode: widget.focusNode,
+      child: Stack(children: [
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 20, bottom: 20),
+            child: CircleAvatar(
+              radius: 10,
+              backgroundColor: true == true ? Colors.red : Colors.green,
+            ),
           ),
         ),
-      ),
-      Container(
-        width: double.infinity,
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
-        child: dataTableDespachos(),
-      ),
-      Align(
-        alignment: Alignment.bottomLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, bottom: 20),
-          child: Tooltip(
-            message: 'Retirar Mercaderia',
-            child: FilledButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: dataTableDespachos(),
+        ),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 20),
+            child: Tooltip(
+              message: 'Retirar Mercaderia',
+              child: FilledButton(
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
+                    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
                   ),
-                  foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                ),
-                onPressed: () => context.read<DespachoProvider>().armarDespachos(context.read<RetirarMerProvider>().listaProductosFiltrados).catchError((error) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se produjo algun error. $error')));
-                    }).whenComplete(() => context.read<DespachoProvider>().getListaDespacho()),
-                child: const Text('Retirar Mercaderia')),
+                  onPressed: () => context.read<DespachoProvider>().armarDespachos(context.read<RetirarMerProvider>().listaProductosFiltrados).catchError((error) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Se produjo algun error. $error')));
+                        }
+                      }).whenComplete(() => context.read<DespachoProvider>().getListaDespacho()),
+                  child: const Text('Retirar Mercaderia')),
+            ),
           ),
         ),
-      ),
-    ]);
+      ]),
+    );
   }
 
   Widget dataTableDespachos() {
@@ -152,7 +167,9 @@ class _DespachoState extends State<Despacho> {
                         context.read<DespachoProvider>().idSeleccionado = e.idDespacho!;
                         context.read<DespachoProvider>().despachoSeleccionado(e).catchError(
                           (onError) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
+                            }
                           },
                         );
                       } else {

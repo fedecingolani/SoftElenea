@@ -4,7 +4,8 @@ import 'package:robot_soft/medidas.dart';
 import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
 
 class DescuentoStock extends StatefulWidget {
-  const DescuentoStock({Key? key}) : super(key: key);
+  const DescuentoStock({required this.focusTextStock, Key? key}) : super(key: key);
+  final FocusNode focusTextStock;
 
   @override
   State<DescuentoStock> createState() => _DescuentoStockState();
@@ -14,11 +15,8 @@ class _DescuentoStockState extends State<DescuentoStock> {
   TextEditingController controller = TextEditingController();
   bool bajaStock = false;
 
-  late FocusNode _focusNode;
-
   @override
   void initState() {
-    _focusNode = FocusNode();
     controller.addListener(() {
       context.read<DespachoProvider>().txtCodigoBarraStock = controller.text;
       if (controller.text.isEmpty) {
@@ -26,8 +24,8 @@ class _DescuentoStockState extends State<DescuentoStock> {
       }
     });
 
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
+    widget.focusTextStock.addListener(() {
+      if (widget.focusTextStock.hasFocus) {
         controller.selection = TextSelection(baseOffset: 0, extentOffset: controller.text.length);
       }
     });
@@ -65,25 +63,27 @@ class _DescuentoStockState extends State<DescuentoStock> {
                   ),
                   width: 210,
                   height: 35,
-                  child: TextField(
-                    focusNode: _focusNode,
-                    controller: controller,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
+                  child: FocusableActionDetector(
+                    child: TextField(
+                      focusNode: widget.focusTextStock,
+                      controller: controller,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      onEditingComplete: () => context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
+                        (onError) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$onError')));
+                        },
+                      ),
+                      // onEditingComplete: () async {
+                      //   var a = await context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
+                      //     (onError) {
+                      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
+                      //     },
+                      //   );
+                      // },
                     ),
-                    onEditingComplete: () => context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
-                      (onError) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$onError')));
-                      },
-                    ),
-                    // onEditingComplete: () async {
-                    //   var a = await context.read<DespachoProvider>().updateStock(controller.text, 1).catchError(
-                    //     (onError) {
-                    //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $onError')));
-                    //     },
-                    //   );
-                    // },
                   ),
                 ),
               ),

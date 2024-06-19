@@ -17,7 +17,7 @@ class RepositorioApi {
       String url = '';
 
       if (dato.isNotEmpty) {
-        url = '${Config().serverIP}/api/UbicacionBusqueda?texto=$dat&esferico=$esferico&cilindrico=$cilindrico&diameter=$diametro';
+        url = '${Config.serverIP}/api/UbicacionBusqueda?texto=$dat&esferico=$esferico&cilindrico=$cilindrico&diameter=$diametro';
       }
 
       if (url == '') {
@@ -43,7 +43,7 @@ class RepositorioApi {
   /// Función que graba los despachos de la base de datos.
   static Future<ModelGetDespachos> createDespacho(ModelGetDespachos data) async {
     try {
-      final String url = "${Config().serverIP}/api/ArmaDespachoEgreso?origen1=${data.origen1}&codbarra1=${data.codigoBarra1}&cantidad1=${data.cantidad1}&origen2=${data.origen2}&codbarra2=${data.codigoBarra2}&cantidad2=${data.cantidad2}&pedido=${data.pedido}";
+      final String url = "${Config.serverIP}/api/ArmaDespachoEgreso?origen1=${data.origen1}&codbarra1=${data.codigoBarra1}&cantidad1=${data.cantidad1}&origen2=${data.origen2}&codbarra2=${data.codigoBarra2}&cantidad2=${data.cantidad2}&pedido=${data.pedido}";
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -66,7 +66,7 @@ class RepositorioApi {
   /// Función que obtiene los despachos de la base de datos.
   static Future<List<ModelGetDespachos>> getDespachos() async {
     try {
-      final String url = '${Config().serverIP}/api/Despachos?estado=-2';
+      final String url = '${Config.serverIP}/api/Despachos?estado=-2';
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -87,7 +87,7 @@ class RepositorioApi {
   /// Función que cambia los estados de los despachos de la base de datos.
   static Future<String?> cambiarEstadoDespacho(int idDespacho, int estado) async {
     try {
-      final String url = '${Config().serverIP}/api/Despacho/CambiaEstado?iddespacho=$idDespacho&estado=$estado';
+      final String url = '${Config.serverIP}/api/Despacho/CambiaEstado?iddespacho=$idDespacho&estado=$estado';
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -106,7 +106,7 @@ class RepositorioApi {
   /// Funcion que consulta los despachos con tipo 2, devuelve producto
   static Future<ModelGetProductos> getProductoTipo2(String codigoBarra) async {
     try {
-      final String url = '${Config().serverIP}/api/ConsultaCBDisponiblesT2?cb=$codigoBarra';
+      final String url = '${Config.serverIP}/api/ConsultaCBDisponiblesT2?cb=$codigoBarra';
 
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
@@ -128,7 +128,7 @@ class RepositorioApi {
   ///Funcion que actualiza el stock del producto
   static Future<void> actualizarProducto(ModelGetProductos productos) async {
     try {
-      final String url = '${Config().serverIP}/api/productos';
+      final String url = '${Config.serverIP}/api/productos';
       final response = await http.put(Uri.parse(url),
           headers: {
             'Content-Type': 'application/json'
@@ -150,7 +150,7 @@ class RepositorioApi {
   ///Funcion que pone en funcionamiento el robot.
   static Future<void> robotDespacho(String idDespacho) async {
     try {
-      final String url = '${Config().serverIP}/api/DespachoIDRun?idDespacho=$idDespacho';
+      final String url = '${Config.serverIP}/api/DespachoIDRun?idDespacho=$idDespacho';
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
       });
@@ -169,7 +169,7 @@ class RepositorioApi {
   ///Función que traer las ordenes - pedidos.
   static Future<List<Pedidos>> pedidosOrdenes() async {
     try {
-      final String url = '${Config().serverIP}/api/clientesOrders';
+      final String url = '${Config.serverIP}/api/clientesOrders';
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
       });

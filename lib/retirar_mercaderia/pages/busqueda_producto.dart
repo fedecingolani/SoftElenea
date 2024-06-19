@@ -7,17 +7,30 @@ import 'package:robot_soft/medidas.dart';
 import 'package:robot_soft/retirar_mercaderia/retirar_mer_provider.dart';
 
 class BusquedaProducto extends StatefulWidget {
-  const BusquedaProducto({Key? key}) : super(key: key);
+  const BusquedaProducto({
+    Key? key,
+    required this.focusForm,
+    required this.focusTextBusqueda,
+    required this.focusTextEsf,
+    required this.focusTextCil,
+    required this.focusTextDiam,
+  }) : super(key: key);
+
+  final FocusNode focusForm;
+  final FocusNode focusTextBusqueda;
+  final FocusNode focusTextEsf;
+  final FocusNode focusTextCil;
+  final FocusNode focusTextDiam;
 
   @override
   State<BusquedaProducto> createState() => _BusquedaProductoState();
 }
 
 class _BusquedaProductoState extends State<BusquedaProducto> {
-  final FocusNode _focusTextBusqueda = FocusNode();
-  final FocusNode _focusTextEsf = FocusNode();
-  final FocusNode _focusTextCil = FocusNode();
-  final FocusNode _focusTextDiam = FocusNode();
+  // final FocusNode _focusTextBusqueda = FocusNode();
+  // final FocusNode _focusTextEsf = FocusNode();
+  // final FocusNode _focusTextCil = FocusNode();
+  // final FocusNode _focusTextDiam = FocusNode();
 
   final TextEditingController _textBusqueda = TextEditingController();
   final TextEditingController _txtEsferico = TextEditingController();
@@ -47,25 +60,25 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
       context.read<RetirarMerProvider>().txtDiametro = _txtDiametro.text;
     });
 
-    _focusTextBusqueda.addListener(() {
-      if (_focusTextBusqueda.hasFocus) {
+    widget.focusTextBusqueda.addListener(() {
+      if (widget.focusTextBusqueda.hasFocus) {
         _textBusqueda.selection = TextSelection(baseOffset: 0, extentOffset: _textBusqueda.text.length);
       }
     });
 
-    _focusTextCil.addListener(() {
-      if (_focusTextCil.hasFocus) {
+    widget.focusTextCil.addListener(() {
+      if (widget.focusTextCil.hasFocus) {
         _txtCilindrico.selection = TextSelection(baseOffset: 0, extentOffset: _txtCilindrico.text.length);
       }
     });
-    _focusTextDiam.addListener(() {
-      if (_focusTextDiam.hasFocus) {
+    widget.focusTextDiam.addListener(() {
+      if (widget.focusTextDiam.hasFocus) {
         _txtDiametro.selection = TextSelection(baseOffset: 0, extentOffset: _txtDiametro.text.length);
       }
     });
 
-    _focusTextEsf.addListener(() {
-      if (_focusTextEsf.hasFocus) {
+    widget.focusTextEsf.addListener(() {
+      if (widget.focusTextEsf.hasFocus) {
         _txtEsferico.selection = TextSelection(baseOffset: 0, extentOffset: _txtEsferico.text.length);
       }
     });
@@ -84,23 +97,8 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-      autofocus: true,
-      focusNode: FocusNode(),
-      onKey: (RawKeyEvent event) {
-        if (event.isKeyPressed(LogicalKeyboardKey.f1)) {
-          _focusTextBusqueda.requestFocus();
-        }
-        if (event.isKeyPressed(LogicalKeyboardKey.f2)) {
-          _focusTextEsf.requestFocus();
-        }
-        if (event.isKeyPressed(LogicalKeyboardKey.f3)) {
-          _focusTextCil.requestFocus();
-        }
-        if (event.isKeyPressed(LogicalKeyboardKey.f4)) {
-          _focusTextDiam.requestFocus();
-        }
-      },
+    return Focus(
+      focusNode: widget.focusForm,
       child: Container(
           margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
@@ -134,7 +132,7 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
                   child: Stack(
                     children: [
                       TextField(
-                        focusNode: _focusTextBusqueda,
+                        focusNode: widget.focusTextBusqueda,
                         controller: _textBusqueda,
                         textAlignVertical: TextAlignVertical.center,
                         decoration: const InputDecoration(
@@ -182,15 +180,15 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
                     )),
                 space60,
                 const Text('Esférico: '),
-                cajaTexto(controller: _txtEsferico, focus: _focusTextEsf, tecla: 'F2'),
+                cajaTexto(controller: _txtEsferico, focus: widget.focusTextEsf, tecla: 'F2'),
                 space20,
                 space20,
                 const Text('Cilíndrico: '),
-                cajaTexto(controller: _txtCilindrico, focus: _focusTextCil, tecla: 'F3'),
+                cajaTexto(controller: _txtCilindrico, focus: widget.focusTextCil, tecla: 'F3'),
                 space20,
                 space20,
                 const Text('Diamétro: '),
-                cajaTexto(controller: _txtDiametro, focus: _focusTextDiam, tecla: 'F4'),
+                cajaTexto(controller: _txtDiametro, focus: widget.focusTextDiam, tecla: 'F4'),
               ],
             ),
           )),
@@ -232,6 +230,17 @@ class _BusquedaProductoState extends State<BusquedaProducto> {
                 ),
               ),
             ));
+  }
+
+  FocusableActionDetector action() {
+    return FocusableActionDetector(
+      child: Container(),
+      shortcuts: {
+        LogicalKeySet(LogicalKeyboardKey.f2): const ActivateIntent(),
+        LogicalKeySet(LogicalKeyboardKey.f3): const ActivateIntent(),
+        LogicalKeySet(LogicalKeyboardKey.f4): const ActivateIntent(),
+      },
+    );
   }
 
   Container cajaTexto({required TextEditingController controller, required FocusNode focus, String tecla = ''}) {
