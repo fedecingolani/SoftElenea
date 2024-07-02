@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:robot_soft/focos_provider.dart';
 import 'package:robot_soft/medidas.dart';
 import 'package:robot_soft/retirar_mercaderia/retirar_despacho_provider.dart';
 
@@ -40,6 +41,7 @@ class _DescuentoStockState extends State<DescuentoStock> {
 
   @override
   Widget build(BuildContext context) {
+    final focusManager = context.watch<FocoProvider>();
     return Container(
       height: double.infinity,
       margin: const EdgeInsets.all(10),
@@ -65,7 +67,7 @@ class _DescuentoStockState extends State<DescuentoStock> {
                   height: 35,
                   child: FocusableActionDetector(
                     child: TextField(
-                      focusNode: widget.focusTextStock,
+                      focusNode: focusManager.stock,
                       controller: controller,
                       textAlignVertical: TextAlignVertical.center,
                       decoration: const InputDecoration(

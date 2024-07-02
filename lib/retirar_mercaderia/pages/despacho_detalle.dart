@@ -21,13 +21,13 @@ class _DetalleDespachoState extends State<DetalleDespacho> {
     return Container(
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(color: Colors.grey.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
-      child: Container(),
-      // child: Row(
-      //   children: [
-      //     Expanded(flex: 1, child: datelleProducto(data, context, 0)),
-      //     Expanded(flex: 1, child: datelleProducto(data, context, 1)),
-      //   ],
-      // ),
+      //child: Container(),
+      child: Row(
+        children: [
+          Expanded(flex: 1, child: datelleProducto(data, context, 0)),
+          Expanded(flex: 1, child: datelleProducto(data, context, 1)),
+        ],
+      ),
     );
   }
 

@@ -23,7 +23,7 @@ class RepositorioApi {
       if (url == '') {
         return Future.error('No se pudo realizar la busqueda');
       }
-
+      print(url);
       final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json'
       });

@@ -64,7 +64,7 @@ class _DespachoState extends State<Despacho> {
     return Focus(
       focusNode: widget.focusNode,
       child: Stack(children: [
-        Align(
+        const Align(
           alignment: Alignment.bottomRight,
           child: Padding(
             padding: const EdgeInsets.only(right: 20, bottom: 20),
